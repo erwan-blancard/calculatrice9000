@@ -3,40 +3,42 @@ from tkinter import font
 
 
 def click(char):
-    # if not (char == "0" and calc_field.get() == "0"):
-    if calc_field.get() == "Error!":
-        calc_field.delete(0, END)
-        calc_field.insert(0, char)
+    if calc_field.cget("text") == "Error!":
+        calc_field.config(text=char)
     else:
-        calc_field.insert(len(calc_field.get()), char)
+        calc_field.config(text=(calc_field.cget("text")+char))
 
 
 def process_statement():
-    statement = calc_field.get()
+    statement = calc_field.cget("text")
     if statement != "":
         try:
             result = str(eval(statement))
-            calc_field.delete(0, END)
-            calc_field.insert(0, result)
+            calc_field.config(text=result)
         except:
-            calc_field.delete(0, END)
-            calc_field.insert(0, "Error!")
+            calc_field.config(text="Error!")
 
 
 def clear_statement():
-    calc_field.delete(0, END)
+    calc_field.config(text="")
+
+
+def del_char():
+    statement = calc_field.cget("text")
+    statement = statement[:-1]
+    calc_field.config(text=statement)
 
 
 window = Tk(className="Calculatrice 9000")
 font.nametofont("TkDefaultFont").configure(size=14)
 window.iconbitmap("calc_IDI_CALC_ICON.ico")
-window.geometry("400x542")
+window.geometry("400x556")
 window.resizable(width=False, height=False)
 
 main_frame = Frame(window, padx=4, pady=4)
 button_frame = Frame(window, padx=4, pady=4)
 
-calc_field = Entry(main_frame, width=384, background="#e1ecf4", justify=CENTER, font=('Arial', 20))
+calc_field = Label(main_frame, relief="sunken", borderwidth=6, width=384, background="#e1ecf4", justify=CENTER, font=('Arial', 20))
 calc_field.pack(padx=12, pady=10, ipady=8)
 
 n0 = Button(button_frame, text="0", width=16, height=2, command=lambda:click("0")).grid(row=6, column=1, columnspan=2, pady=3, padx=3)
@@ -61,7 +63,8 @@ powB = Button(button_frame, text="xⁿ", width=7, height=2, command=lambda:click
 sqrtB = Button(button_frame, text="²√", width=7, height=2, command=lambda:click("**(0.5)")).grid(row=2, column=3, pady=3, padx=3)
 invB = Button(button_frame, text="xˉ¹", width=7, height=2, command=lambda:click("**(-1)")).grid(row=2, column=1, pady=3, padx=3)
 expB = Button(button_frame, text="exp", width=7, height=2, command=lambda:click("E")).grid(row=1, column=2, pady=3, padx=3)
-clearB = Button(button_frame, text="CE", width=16, height=2, command=lambda:clear_statement()).grid(row=1, column=3, columnspan=2, pady=3, padx=3)
+clearB = Button(button_frame, text="CE", width=7, height=2, command=lambda:clear_statement()).grid(row=1, column=3, pady=3, padx=3)
+delB = Button(button_frame, text="DEL", width=7, height=2, command=lambda:del_char()).grid(row=1, column=4, pady=3, padx=3)
 
 main_frame.pack()
 button_frame.pack()
