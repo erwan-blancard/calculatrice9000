@@ -85,7 +85,7 @@ def clear_history():
         os.remove("history.txt")
     global menubar
     menuhistory.delete(0, END)
-    menuhistory.add_command(label="Clear History", command=lambda: clear_history())
+    menuhistory.add_command(label="Effacer l'historique", command=lambda: clear_history())
 
 
 window = Tk(className="Calculatrice 9000")
@@ -98,8 +98,8 @@ window.resizable(width=False, height=False)
 # history
 menubar = Menu(window)
 menuhistory = Menu(menubar, tearoff=0)
-menuhistory.add_command(label="Clear History", command=lambda: clear_history())
-menubar.add_cascade(label="History", menu=menuhistory)
+menuhistory.add_command(label="Effacer l'historique", command=lambda: clear_history())
+menubar.add_cascade(label="Historique", menu=menuhistory)
 load_history()
 window.config(menu=menubar)
 
