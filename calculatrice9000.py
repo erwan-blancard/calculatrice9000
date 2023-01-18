@@ -64,7 +64,7 @@ def add_to_history(statement, result, append_to_file=True):
     label_filled = statement+" = "+result
     global menuhistory
     if menuhistory.entrycget(END, "label") != label_filled:
-        menuhistory.add_command(label=statement+" = "+result, command=lambda line=statement: load_to_calc_field(line))
+        menuhistory.add_command(label=label_filled, command=lambda line=statement: load_to_calc_field(line))
         if append_to_file:
             if os.path.exists("history.txt"):
                 file = open("history.txt", "a")
