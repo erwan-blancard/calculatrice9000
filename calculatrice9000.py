@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import font
+import os
 
 
 def click(char):
@@ -15,6 +16,7 @@ def process_statement():
         try:
             result = str(eval(statement))
             calc_field.config(text=result)
+            add_to_history(statement, result)
         except:
             calc_field.config(text="Error!")
 
@@ -29,11 +31,77 @@ def del_char():
     calc_field.config(text=statement)
 
 
+def load_history():
+    if os.path.exists("history.txt"):
+        file = open("history.txt")
+        h_list = []
+        statement_list = []
+        result_list = []
+        for line in file:
+            h_list += [line]
+
+        j = 0
+        while j < len(h_list):
+            h_list[j] = h_list[j].replace("\n", "")
+
+            separator_index = 0
+            for c in h_list[j]:
+                if c == ",":
+                    statement_list += [h_list[j][0:separator_index]]
+                    result_list += [h_list[j][separator_index+1:]]
+                    break
+                separator_index += 1
+            j += 1
+
+        i = 0
+        while i < len(statement_list):
+            add_to_history(statement_list[i], result_list[i], False)
+            i += 1
+        file.close()
+
+
+def add_to_history(statement, result, append_to_file=True):
+    label_filled = statement+" = "+result
+    global menuhistory
+    if menuhistory.entrycget(END, "label") != label_filled:
+        menuhistory.add_command(label=statement+" = "+result, command=lambda line=statement: load_to_calc_field(line))
+        if append_to_file:
+            if os.path.exists("history.txt"):
+                file = open("history.txt", "a")
+                file.write(statement+","+result+"\n")
+                file.close()
+            else:
+                file = open("history.txt", "w")
+                file.write(statement+","+result+"\n")
+                file.close()
+
+
+def load_to_calc_field(line):
+    calc_field.config(text=line)
+
+
+def clear_history():
+    if os.path.exists("history.txt"):
+        os.remove("history.txt")
+    global menubar
+    menuhistory.delete(0, END)
+    menuhistory.add_command(label="Clear History", command=lambda: clear_history())
+
+
 window = Tk(className="Calculatrice 9000")
 font.nametofont("TkDefaultFont").configure(size=14)
 window.iconbitmap("calc_IDI_CALC_ICON.ico")
-window.geometry("400x556")
+# window.geometry("400x556")
+window.geometry("400x572")
 window.resizable(width=False, height=False)
+
+# history
+menubar = Menu(window)
+menuhistory = Menu(menubar, tearoff=0)
+menuhistory.add_command(label="Clear History", command=lambda: clear_history())
+menubar.add_cascade(label="History", menu=menuhistory)
+load_history()
+window.config(menu=menubar)
 
 main_frame = Frame(window, padx=4, pady=4)
 button_frame = Frame(window, padx=4, pady=4)
